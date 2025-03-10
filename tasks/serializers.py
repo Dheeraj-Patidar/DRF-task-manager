@@ -4,13 +4,13 @@ from .models import CustomUser, Task
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
-    task = serializers.StringRelatedField(many=True, read_only=True) # string reprasentation of tasks
+    task = serializers.StringRelatedField(
+        many=True, read_only=True
+    )  # string reprasentation of tasks
 
     class Meta:
         model = CustomUser
         fields = ["id", "email", "password", "task"]
-
-        extra_kwargs = {"email": {"read_only": True}}
 
     def create(self, validated_data):
         password = validated_data.pop("password")  # Extract password

@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+
 from .managers import CustomUserManager
 
 
@@ -27,7 +28,7 @@ class Task(models.Model):
         ("in-progress", "In Progress"),
         ("completed", "Completed"),
     )
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
     assigned_to = models.ForeignKey(
@@ -42,4 +43,3 @@ class Task(models.Model):
 
     def __str__(self):
         return self.title
-
