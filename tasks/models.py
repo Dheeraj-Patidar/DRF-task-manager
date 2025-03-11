@@ -8,7 +8,10 @@ from .managers import CustomUserManager
 # Custom User Model
 class CustomUser(AbstractUser):
     username = None
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
+
     # points = models.PositiveIntegerField(default=0)
 
     USERNAME_FIELD = "email"

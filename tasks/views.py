@@ -13,6 +13,7 @@ from .serializers import CustomUserSerializer, TaskSerializer
 
 
 class CustomUserListView(ListAPIView):
+    """showing all users"""
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     authentication_classes = [JWTAuthentication]
@@ -20,10 +21,9 @@ class CustomUserListView(ListAPIView):
 
 
 class CustomUserCreateView(CreateAPIView):
+    """create new user"""
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
-    # authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated]
 
 
 class CustomUserRetrieveView(RetrieveAPIView):
@@ -43,30 +43,38 @@ class CustomUserUpdateView(UpdateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        return CustomUser.objects.filter(id=self.request.user.id)
+    
 
 class CustomUserDistroyView(DestroyAPIView):
-    """Delete user."""
+    """Delete only the logged-in user's account."""
 
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        return CustomUser.objects.filter(id=self.request.user.id)
 
-"""Task API ........................................."""
+"""Task API ..................................................................................."""
 
 
 class TaskListAPIView(ListAPIView):
-    """list all tasks"""
+    """List tasks assigned to the logged-in user"""
 
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return Task.objects.filter(assigned_to=self.request.user)
 
 
 class TaskCreateAPIView(CreateAPIView):
-    """create tasks"""
+    """Create a new task and assign it to the logged-in user"""
 
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
@@ -80,27 +88,36 @@ class TaskCreateAPIView(CreateAPIView):
 
 
 class TaskRetrieveAPIView(RetrieveAPIView):
-    """retrieve single task"""
+    """Retrieve only tasks assigned to the logged-in user"""
 
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Task.objects.filter(assigned_to=self.request.user)
 
 
 class TaskUpdateAPIView(UpdateAPIView):
-    """update task"""
+    """Update only tasks assigned to the logged-in user"""
 
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Task.objects.filter(assigned_to=self.request.user)
 
 
 class TaskDestroyAPIView(DestroyAPIView):
-    """delete task"""
+    """Delete only tasks assigned to the logged-in user"""
 
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Task.objects.filter(assigned_to=self.request.user)

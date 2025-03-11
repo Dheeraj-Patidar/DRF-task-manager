@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import CustomUser, Task
+import re 
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -10,7 +11,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ["id", "email", "password", "task"]
+        fields = ["id", "first_name", "last_name", "email", "password", "task"]
 
     def create(self, validated_data):
         password = validated_data.pop("password")  # Extract password
@@ -25,6 +26,18 @@ class CustomUserSerializer(serializers.ModelSerializer):
             instance.set_password(validated_data.pop("password"))
 
         return super().update(instance, validated_data)
+    
+    def validate_first_name(self, value):
+        """Ensure first_name contains only alphabets"""
+        if not re.match(r"^[A-Za-z]+$", value):
+            raise serializers.ValidationError("First name should contain only alphabets.")
+        return value
+
+    def validate_last_name(self, value):
+        """Ensure last_name contains only alphabets"""
+        if not re.match(r"^[A-Za-z]+$", value):
+            raise serializers.ValidationError("Last name should contain only alphabets.")
+        return value
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -34,11 +47,3 @@ class TaskSerializer(serializers.ModelSerializer):
         model = Task
         fields = "__all__"
         extra_kwargs = {"assigned_to": {"read_only": True}}
-
-    def create(self, validated_data):
-        request = self.context.get("request")  # Get request from context
-        if not request or not request.user:
-            raise serializers.ValidationError("User must be authenticated.")
-
-        validated_data["assigned_to"] = request.user  # Assign the authenticated user
-        return Task.objects.create(**validated_data)

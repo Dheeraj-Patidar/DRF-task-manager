@@ -5,13 +5,14 @@ from .models import CustomUser, Task
 
 
 class CustomUserAdmin(UserAdmin):
-    list_display = ["email", "is_staff"]
+    list_display = ["first_name", "last_name", "email", "is_staff"]
     ordering = ["email"]
     search_fields = ("email",)
 
     # ✅ Customize the fieldsets to remove 'username'
     fieldsets = (
         (None, {"fields": ("email", "password")}),
+
         (
             "Permissions",
             {
@@ -24,6 +25,7 @@ class CustomUserAdmin(UserAdmin):
                 )
             },
         ),
+        ("Personal Data", {"fields": ("first_name", "last_name")}),
         ("Important dates", {"fields": ("last_login", "date_joined")}),
     )
 
